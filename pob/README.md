@@ -3,9 +3,13 @@
 
 # Signatures
 
+on browser can be done using Metamask as:
+
 ```js
 signedMessage = await ethereum.request ({
-                    method: 'personal_sign',
-                    params: [messageToSign, publicKey],
+    method : 'personal_sign',
+    params : [messageToSign, publicKey],
 });
 ```
+
+The `messageToSign` comes from the coordinator as response of `/pre-login` api.
