@@ -1,0 +1,66 @@
+@startuml
+hide footbox
+
+actor Payer as "Challenge\ninitiator"
+participant Coordinator
+
+note over Prover : claims = {"bandwidth":50},\nip = 1.2.3.4,\npubkey = 0x123...
+
+note over Challenger1 : claims = {"bandwidth":20},\nip = 10.20.30.40,\npublicKey = 0x456...,\nwalletPublicKey = 0x789
+note over Challenger2 : claims = {"bandwidth":15},\nip = 50.60.70.80,\npublicKey = 0xabc...,\nwalletPublicKey = 0xdef...
+note over Challenger3 : claims = {"bandwidth":10},\nip = 90.100.110.120,\npublicKey = 0xaaa,\nwalletPublicKey = 0xbbb...
+
+== Login ==
+
+Prover -> Coordinator : Login with publicKey & Create Websocket
+Prover -> Coordinator : Ping every 30 seconds on Websocket
+
+...
+
+Challenger1 -> Coordinator : Login with publicKey & Create Websocket
+Challenger1 -> Coordinator : Ping every 30 seconds on Websocket
+...
+Challenger2 -> Coordinator : Login with publicKey & Create Websocket
+Challenger2 -> Coordinator : Ping every 30 seconds on Websocket
+...
+Challenger3 -> Coordinator : Login with publicKey & Create Websocket
+Challenger3 -> Coordinator : Ping every 30 seconds on Websocket
+
+...
+
+== Launch a Challenge ==
+Payer -> Coordinator : Login
+entity Witnesschain_DCL_contract
+
+Payer -> Witnesschain_DCL_contract : Request a challenge
+Payer -> Coordinator : Launch a challenge
+
+Coordinator -> Coordinator : Choose challengers 1,2,3
+...
+Coordinator -> Prover : challenge info = {\n\tchallengers : [\n\t],\n}
+Coordinator -> Challenger1 : challenge info
+Coordinator -> Challenger2 : challenge info
+Coordinator -> Challenger3 : challenge info
+
+== Challenge ==
+Challenger1 -> Prover : challenge packets
+Challenger2 -> Prover : challenge packets
+Challenger3 -> Prover : challenge packets
+...
+Prover -> Challenger1  : challenge response
+Prover -> Challenger2  : challenge response
+Prover -> Challenger3  : challenge response
+...
+Challenger1 -> Coordinator : challenge result
+Challenger2 -> Coordinator : challenge result
+Challenger3 -> Coordinator : challenge result
+
+...
+
+== Rewards ==
+Witnesschain_DCL_contract -> Challenger1 : rewards in walletPublicKey
+Witnesschain_DCL_contract -> Challenger2 : rewards in walletPublicKey
+Witnesschain_DCL_contract -> Challenger3 : rewards in walletPublicKey
+
+@enduml
+
